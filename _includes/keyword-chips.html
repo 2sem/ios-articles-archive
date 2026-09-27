@@ -1,0 +1,7 @@
+{%- if include.keywords and include.keywords.size > 0 -%}
+<ul class="chips" aria-label="Keywords">
+  {%- for kw in include.keywords -%}
+  <li><a class="chip" href="{{ '/' | relative_url }}?k={{ kw | uri_escape }}">{{ kw }}</a></li>
+  {%- endfor -%}
+</ul>
+{%- endif -%}

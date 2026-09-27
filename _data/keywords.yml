@@ -1,0 +1,93 @@
+# Canonical keyword taxonomy for the archive.
+#
+# `scripts/keywords.rb` uses this file to:
+#   1. auto-assign keywords to articles that don't declare any, and
+#   2. normalize hand-written keywords (e.g. "async/await" -> "Concurrency").
+#
+# Each entry:
+#   name:     canonical keyword shown on the site
+#   aliases:  phrases that indicate the topic, matched on word boundaries.
+#             The name itself is always an alias. Matching is
+#             case-insensitive, except for single-word aliases containing an
+#             uppercase letter (code identifiers like `Task`, `DI`, `UIView`),
+#             which must match exactly to avoid false positives.
+#             Korean aliases work with particles attached ("모듈화를" matches 모듈화).
+#
+# Add new topics here — no code change needed.
+
+- name: Swift
+  aliases: [swift language, swift 5, swift 6, swift evolution, value semantics]
+- name: SwiftUI
+  aliases: ["@State", "@Binding", "@Environment", ViewBuilder, NavigationStack, view modifier]
+- name: UIKit
+  aliases: [UIViewController, UIView, UITableView, UICollectionView, UINavigationController, diffable data source]
+- name: Concurrency
+  aliases: [async/await, async await, actor, actors, Sendable, MainActor, Task, TaskGroup, structured concurrency, data race, GCD, DispatchQueue, Grand Central Dispatch, 동시성, 비동기, 액터, 데이터 레이스]
+- name: Combine
+  aliases: [Publisher, Subscriber, AnyCancellable, PassthroughSubject, CurrentValueSubject]
+- name: Observation
+  aliases: ["@Observable", ObservableObject, "@Published", Observation framework]
+- name: Architecture
+  aliases: [MVVM, MVC, VIPER, TCA, Composable Architecture, clean architecture, Coordinator, unidirectional data flow, 아키텍처, 설계]
+- name: Dependency Injection
+  aliases: [DI, dependency container, service locator, inversion of control, 의존성 주입]
+- name: Modularization
+  aliases: [modular, feature module, micro-features, module boundaries, Tuist, 모듈화, 모듈 경계, 모듈 분리]
+- name: Swift Package Manager
+  aliases: [SPM, Package.swift, swift package, CocoaPods, Carthage]
+- name: Testing
+  aliases: [XCTest, Swift Testing, unit test, unit tests, UI test, UI tests, snapshot test, test double, mock, mocks, TDD, 테스트, 단위 테스트, 테스트 코드]
+- name: Performance
+  aliases: [app launch, launch time, hitch, hitches, frame drop, scroll performance, optimization, optimize, 성능, 최적화, 앱 실행 속도]
+- name: Memory Management
+  aliases: [ARC, retain cycle, retain cycles, memory leak, memory leaks, weak self, unowned, strong reference, 메모리 누수, 순환 참조, 메모리 관리]
+- name: Instruments
+  aliases: [Time Profiler, Allocations, Leaks instrument, signpost, os_signpost]
+- name: Debugging
+  aliases: [LLDB, breakpoint, breakpoints, crash log, crash logs, symbolication, debugging, Memory Graph, Debug Memory Graph, 디버깅]
+- name: Networking
+  aliases: [URLSession, REST, HTTP, GraphQL, WebSocket, Codable, JSONDecoder, 네트워킹, 네트워크]
+- name: Persistence
+  aliases: [Core Data, SwiftData, UserDefaults, Keychain, SQLite, Realm, NSPersistentContainer, "@Model", 저장소, 영속성]
+- name: Animation
+  aliases: [animations, withAnimation, Core Animation, CALayer, matchedGeometryEffect, spring animation, 애니메이션]
+- name: Layout
+  aliases: [Auto Layout, NSLayoutConstraint, stack view, UIStackView, Layout protocol, safe area, 레이아웃]
+- name: Accessibility
+  aliases: [VoiceOver, Dynamic Type, a11y, accessibilityLabel, 접근성]
+- name: Localization
+  aliases: [i18n, l10n, String Catalog, Localizable.strings, internationalization, 현지화, 다국어]
+- name: Xcode
+  aliases: [Xcode project, scheme, schemes, xcconfig, build settings, Xcode Cloud]
+- name: Build System
+  aliases: [build time, build times, compile time, incremental build, linker, DerivedData, Build With Timing Summary, Compilation Mode, Other Swift Flags, 빌드 시간, 증분 빌드, 컴파일 시간, 빌드 속도]
+- name: CI/CD
+  aliases: [continuous integration, fastlane, GitHub Actions, Bitrise, TestFlight, code signing, 배포 자동화]
+- name: App Store
+  aliases: [App Store Connect, App Review, in-app purchase, StoreKit, app submission]
+- name: Security
+  aliases: [encryption, certificate pinning, SSL pinning, jailbreak, secure enclave, Keychain, 보안, 암호화]
+- name: Privacy
+  aliases: [privacy manifest, App Tracking Transparency, ATT, required reason API, PrivacyInfo.xcprivacy, 개인정보]
+- name: Push Notifications
+  aliases: [APNs, UNUserNotificationCenter, remote notification, remote notifications, push notification, 푸시 알림, 푸시]
+- name: Background Tasks
+  aliases: [BGTaskScheduler, background fetch, background refresh, background processing, 백그라운드 작업]
+- name: Widgets
+  aliases: [WidgetKit, Live Activity, Live Activities, TimelineProvider, 위젯]
+- name: App Intents
+  aliases: [Siri, Shortcuts, AppIntent, AppShortcutsProvider]
+- name: Generics
+  aliases: [opaque type, type erasure, existential, associatedtype, protocol-oriented]
+- name: Macros
+  aliases: [Swift macros, macro, "#Preview", freestanding macro, attached macro]
+- name: Error Handling
+  aliases: [throws, typed throws, Result type, do-catch, error handling, 에러 처리, 오류 처리]
+- name: Code Review
+  aliases: [pull request, pull requests, code reviews, reviewer, 코드 리뷰, 리뷰어]
+- name: Career
+  aliases: [interview, interviews, career, mentoring, leveling, senior engineer, 커리어, 면접, 이직]
+- name: visionOS
+  aliases: [Vision Pro, RealityKit, spatial computing, immersive space]
+- name: Machine Learning
+  aliases: [Core ML, Create ML, Vision framework, Foundation Models, on-device model, 머신러닝, 온디바이스]

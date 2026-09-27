@@ -1,0 +1,13 @@
+<ol class="results">
+  {%- for entry in include.entries -%}
+  <li class="result">
+    <div class="result-meta">
+      <span class="badge badge-{{ entry.kind }}">{{ entry.kind }}</span>
+      <time datetime="{{ entry.date | date: '%Y-%m-%d' }}">{{ entry.date | date: '%b %-d, %Y' }}</time>
+    </div>
+    <h3 class="result-title"><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h3>
+    {%- if entry.summary and entry.summary != '' %}<p class="result-snippet">{{ entry.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif -%}
+    {% include keyword-chips.html keywords=entry.keywords %}
+  </li>
+  {%- endfor -%}
+</ol>

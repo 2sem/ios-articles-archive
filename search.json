@@ -1,0 +1,20 @@
+---
+layout: null
+permalink: /search.json
+---
+{%- assign entries = site.articles | concat: site.handbook -%}
+[
+{%- for e in entries -%}
+  {
+    "title": {{ e.title | jsonify }},
+    "url": {{ e.url | relative_url | jsonify }},
+    "date": {{ e.date | date: '%Y-%m-%d' | jsonify }},
+    "kind": {{ e.kind | jsonify }},
+    "author": {{ e.author | jsonify }},
+    "source": {{ e.source_url | jsonify }},
+    "keywords": {{ e.keywords | default: empty | jsonify }},
+    "summary": {{ e.summary | default: '' | markdownify | strip_html | strip | jsonify }},
+    "content": {{ e.content | strip_html | normalize_whitespace | jsonify }}
+  }{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]

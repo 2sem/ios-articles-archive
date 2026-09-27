@@ -1,0 +1,19 @@
+---
+layout: default
+title: Keywords
+permalink: /keywords/
+---
+<h1>Keywords</h1>
+<p class="lede">Every keyword in use. Keywords come from the taxonomy in
+<a href="https://github.com/{{ site.repository }}/blob/main/_data/keywords.yml"><code>_data/keywords.yml</code></a>
+and are assigned automatically to new entries.</p>
+{%- assign entries = site.articles | concat: site.handbook -%}
+<ul class="keyword-cloud">
+{%- for topic in site.data.keywords -%}
+  {%- assign n = 0 -%}
+  {%- for e in entries -%}{%- if e.keywords contains topic.name -%}{%- assign n = n | plus: 1 -%}{%- endif -%}{%- endfor -%}
+  {%- if n > 0 %}
+  <li><a class="chip" href="{{ '/' | relative_url }}?k={{ topic.name | uri_escape }}">{{ topic.name }} <span class="count">{{ n }}</span></a></li>
+  {%- endif -%}
+{%- endfor %}
+</ul>

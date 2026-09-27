@@ -1,0 +1,9 @@
+---
+layout: default
+title: Handbook
+permalink: /handbook/
+---
+<h1>Handbook</h1>
+<p class="lede">Evergreen guides on iOS engineering practice. Updated in place, dated by last revision.</p>
+{%- assign sorted = site.handbook | sort: 'title' -%}
+{% include entry-list.html entries=sorted %}

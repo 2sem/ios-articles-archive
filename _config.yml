@@ -1,0 +1,43 @@
+title: iOS Articles Archive
+description: >-
+  An archive of articles and a handbook about iOS engineering —
+  searchable by keyword and date.
+lang: en
+url: "https://2sem.github.io"
+baseurl: "/ios-articles-archive"
+repository: 2sem/ios-articles-archive
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+collections:
+  articles:
+    output: true
+    permalink: /articles/:year/:month/:title/
+  handbook:
+    output: true
+    permalink: /handbook/:title/
+
+defaults:
+  - scope: { path: "", type: articles }
+    values: { layout: post, kind: article }
+  - scope: { path: "", type: handbook }
+    values: { layout: post, kind: handbook }
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-feed
+
+feed:
+  collections:
+    - articles
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - scripts/
+  - vendor/
+  - README.md
+  - CONTRIBUTING.md

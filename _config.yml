@@ -25,6 +25,11 @@ defaults:
     values: { layout: post, kind: article }
   - scope: { path: "", type: handbook }
     values: { layout: post, kind: handbook }
+  # Korean translations (scripts/translate.rb) live in ko/ subfolders.
+  - scope: { path: "_articles/ko", type: articles }
+    values: { lang: ko, permalink: "/ko/articles/:year/:month/:title/" }
+  - scope: { path: "_handbook/ko", type: handbook }
+    values: { lang: ko, permalink: "/ko/handbook/:title/" }
 
 plugins:
   - jekyll-seo-tag

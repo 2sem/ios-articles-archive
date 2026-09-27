@@ -1,6 +1,7 @@
 ---
 title: "Xcode 빌드 시간 줄이기: 실전 체크리스트"
 date: 2026-06-02
+lang: ko
 summary: "모듈화된 앱에서 증분 빌드 시간을 절반으로 줄인 방법 — 타입 체크 경고, 빌드 설정, 모듈 경계 정리."
 keywords: ["Build System", "Modularization", "Xcode"]
 ---

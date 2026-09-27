@@ -7,6 +7,12 @@ layout: default
       <a class="badge badge-{{ page.kind }}" href="{{ '/' | relative_url }}?kind={{ page.kind }}">{{ page.kind }}</a>
       <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: '%B %-d, %Y' }}</time>
       {%- if page.author %} · {{ page.author }}{% endif -%}
+      {%- include counterpart.html entry=page -%}
+      {%- if counterpart %}
+      <a class="lang-switch" href="{{ counterpart.url | relative_url }}" hreflang="{{ counterpart.lang | default: 'en' }}">
+        {%- if page.translation_of %}원문 (English){% else %}한국어로 읽기{% endif -%}
+      </a>
+      {%- endif %}
     </p>
     <h1>{{ page.title }}</h1>
     {%- if page.summary and page.summary != '' %}<p class="lede">{{ page.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif %}
@@ -15,10 +21,13 @@ layout: default
     <p class="source">Originally published at <a href="{{ page.source_url }}" rel="noopener">{{ page.source_url | split: '/' | slice: 2 | first }}</a></p>
     {%- endif %}
   </header>
+  {%- if page.translation_of and counterpart %}
+  <p class="notice">이 글은 <a href="{{ counterpart.url | relative_url }}">원문</a>을 한국어로 번역한 것입니다. 코드와 일부 용어는 원문 그대로 두었습니다.</p>
+  {%- endif %}
   <div class="prose">
     {{ content }}
   </div>
   <footer class="entry-footer">
-    <a href="https://github.com/{{ site.repository }}/edit/main/{{ page.path }}">Suggest an edit</a>
+    <a href="https://github.com/{{ site.repository }}/edit/main/{{ page.path }}">{% if page.lang == 'ko' %}수정 제안{% else %}Suggest an edit{% endif %}</a>
   </footer>
 </article>

@@ -1,0 +1,87 @@
+name: Process entries
+
+# For new or edited archive entries in a pull request:
+#   1. archive a Korean translation of every entry not written in Korean (scripts/translate.rb)
+#   2. assign keywords from _data/keywords.yml (scripts/keywords.rb)
+# and commit the result back to the pull request branch.
+#
+# Translation needs the ANTHROPIC_API_KEY repository secret. Without it (or on forks,
+# which don't receive secrets) translations are skipped and done on merge instead.
+
+on:
+  pull_request:
+    paths:
+      - "_articles/**"
+      - "_handbook/**"
+      - "_data/keywords.yml"
+      - "scripts/keywords.rb"
+      - "scripts/translate.rb"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: entries-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    env:
+      SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Preview
+        run: |
+          {
+            echo "### Translations"
+            echo '```'
+            bundle exec ruby scripts/translate.rb --dry-run 2>&1
+            echo '```'
+            echo "### Keywords"
+            echo '```'
+            bundle exec ruby scripts/keywords.rb --dry-run 2>&1
+            echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Translate to Korean
+        if: env.SAME_REPO == 'true'
+        run: bundle exec ruby scripts/translate.rb
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Assign keywords
+        if: env.SAME_REPO == 'true'
+        run: bundle exec ruby scripts/keywords.rb
+
+      - name: Commit to the branch
+        if: env.SAME_REPO == 'true'
+        run: |
+          git add _articles _handbook
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Archive Korean translations and keywords"
+          git push
+
+      # Workflows can't push to forks: ask the contributor to run the keyword script instead.
+      # (Translations for fork PRs are created when the PR is merged.)
+      - name: Check keywords (forks)
+        if: env.SAME_REPO != 'true'
+        run: |
+          bundle exec ruby scripts/keywords.rb --check || {
+            echo "::error::Some entries need keywords. Run 'ruby scripts/keywords.rb' locally and push the result."
+            exit 1
+          }

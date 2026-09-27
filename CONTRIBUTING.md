@@ -26,7 +26,7 @@ Only archive external articles you have the right to republish; otherwise write 
 
 ## 3. Keywords
 
-Leave `keywords` empty and open a pull request — the **Keywords** workflow assigns them and commits to your branch.
+Leave `keywords` empty and open a pull request — the **Process entries** workflow assigns them and commits to your branch.
 (From a fork, run `ruby scripts/keywords.rb` yourself; the workflow checks it.)
 
 You may also set keywords by hand. They are normalized to the taxonomy's canonical names;
@@ -35,7 +35,15 @@ keywords outside `_data/keywords.yml` are kept but produce a warning — prefer 
 **Good keywords** describe what a reader would search for: the main topic first, then at most a few secondary topics.
 If the tagger misses the main topic, the fix is usually a missing alias in `_data/keywords.yml`.
 
-## 4. Preview
+## 4. Korean translation
+
+If the entry isn't in Korean, don't write a translation yourself — the **Process entries** workflow
+archives one at `ko/<same file name>` when you open the pull request (or on merge, for forks).
+For a Korean-language entry, add `lang: ko` to the front matter (it's also detected automatically).
+
+To correct a translation, fix the original's wording instead: translations are regenerated whenever the original changes.
+
+## 5. Preview
 
 ```sh
 bundle exec jekyll serve

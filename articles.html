@@ -4,7 +4,8 @@ title: Articles
 permalink: /articles/
 ---
 <h1>Articles</h1>
-{%- assign sorted = site.articles | sort: 'date' | reverse -%}
+<p class="lede">Every article not written in Korean has a 한국어 translation archived alongside it.</p>
+{%- assign sorted = site.articles | where_exp: 'e', 'e.translation_of == nil' | sort: 'date' | reverse -%}
 {%- assign years = sorted | group_by_exp: 'e', "e.date | date: '%Y'" -%}
 <p class="status">{{ sorted.size }} articles</p>
 {%- for year in years %}

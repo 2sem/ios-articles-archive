@@ -1,0 +1,12 @@
+{%- comment -%}
+  Finds the other-language version of `include.entry`:
+  a translation points at its original via `translation_of`; an original is found by
+  looking for the translation that points back at it. Sets `counterpart`.
+{%- endcomment -%}
+{%- assign counterpart = nil -%}
+{%- assign _docs = site[include.entry.collection] -%}
+{%- if include.entry.translation_of -%}
+  {%- assign counterpart = _docs | where: "relative_path", include.entry.translation_of | first -%}
+{%- else -%}
+  {%- assign counterpart = _docs | where: "translation_of", include.entry.relative_path | first -%}
+{%- endif -%}

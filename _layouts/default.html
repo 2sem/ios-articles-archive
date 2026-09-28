@@ -8,6 +8,16 @@
   {% feed_meta %}
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff9f0a'/%3E%3Cstop offset='.55' stop-color='%23ff375f'/%3E%3Cstop offset='1' stop-color='%230a84ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+  <script>
+    // Reader's language (EN/KO toggle), applied before paint so lists don't flash the other language.
+    (function () {
+      var lang;
+      try { lang = localStorage.getItem("archive-lang"); } catch (e) {}
+      if (lang !== "en" && lang !== "ko") lang = /^ko\b/i.test(navigator.language || "") ? "ko" : "en";
+      document.documentElement.dataset.pref = lang;
+    })();
+  </script>
+  <script src="{{ '/assets/js/lang.js' | relative_url }}" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -22,6 +32,10 @@
         <a href="{{ '/handbook/' | relative_url }}"{% if here == '/handbook/' %} aria-current="page"{% endif %}>Handbook</a>
         <a href="{{ '/keywords/' | relative_url }}"{% if here == '/keywords/' %} aria-current="page"{% endif %}>Keywords</a>
       </nav>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-set-lang="en" lang="en" aria-pressed="false">EN</button>
+        <button type="button" data-set-lang="ko" lang="ko" aria-pressed="false">KO</button>
+      </div>
     </div>
   </header>
 

@@ -1,24 +1,20 @@
 ---
 layout: default
 ---
-<article class="entry">
+{%- include counterpart.html entry=page -%}
+<article class="entry" data-page-lang="{{ page.lang | default: 'en' }}"
+  {%- if counterpart %} data-alt-url="{{ counterpart.url | relative_url }}" data-alt-lang="{{ counterpart.lang | default: 'en' }}"{% endif %}>
   <header class="entry-header">
     <p class="result-meta">
       <a class="badge badge-{{ page.kind }}" href="{{ '/' | relative_url }}?kind={{ page.kind }}">{{ page.kind }}</a>
       <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: '%B %-d, %Y' }}</time>
       {%- if page.author %} · {{ page.author }}{% endif -%}
-      {%- include counterpart.html entry=page -%}
-      {%- if counterpart %}
-      <a class="lang-switch" href="{{ counterpart.url | relative_url }}" hreflang="{{ counterpart.lang | default: 'en' }}">
-        {%- if page.translation_of %}원문 (English){% else %}한국어로 읽기{% endif -%}
-      </a>
-      {%- endif %}
     </p>
     <h1>{{ page.title }}</h1>
     {%- if page.summary and page.summary != '' %}<p class="lede">{{ page.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif %}
     {% include keyword-chips.html keywords=page.keywords %}
     {%- if page.source_url %}
-    <p class="source">Originally published at <a href="{{ page.source_url }}" rel="noopener">{{ page.source_url | split: '/' | slice: 2 | first }}</a></p>
+    <p class="source">{% if page.lang == 'ko' %}원문{% if page.author %}({{ page.author }}){% endif %}{% else %}Original article{% if page.author %} by {{ page.author }}{% endif %}{% endif %}: <a href="{{ page.source_url }}" rel="noopener">{{ page.source_url | split: '/' | slice: 2 | first }}</a></p>
     {%- endif %}
   </header>
   {%- if page.translation_of and counterpart %}

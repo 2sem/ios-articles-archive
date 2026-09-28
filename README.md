@@ -9,8 +9,12 @@ An archive of articles and a handbook about iOS engineering, published with GitH
 - **Keywords are assigned automatically** to new entries from a curated iOS taxonomy
   ([`_data/keywords.yml`](_data/keywords.yml)).
 - Two collections: dated **articles** (`_articles/`) and evergreen **handbook** pages (`_handbook/`).
-- **Every entry not written in Korean gets a Korean translation** archived next to it
-  (`_articles/ko/`, `_handbook/ko/`), linked both ways and searchable.
+- **Every entry not written in Korean gets a Korean version** archived next to it
+  (`_articles/ko/`, `_handbook/ko/`), searchable in either language.
+- **EN / KO toggle** in the header switches the content you're viewing: an article flips to its other
+  version, and lists and search results show each entry in the chosen language. Entries without a
+  Korean version always show in their original language (KO is disabled on those pages).
+  The choice is remembered; Korean-locale browsers start in KO.
 - English and Korean content both work in search and in keyword tagging.
 
 ## Search syntax
@@ -22,7 +26,6 @@ An archive of articles and a handbook about iOS engineering, published with GitH
 | `actor -combine` | exclude entries mentioning `combine` |
 | keyword chips | narrow to entries tagged with **all** selected keywords |
 | From / To, presets | inclusive date range |
-| Language | `English` / `한국어`; with **All**, an article and its translation show as one result |
 | `/` | focus the search box · `Esc` clears it |
 
 Results are ranked by where terms appear (title > keywords > summary > body); sort by date instead with the Sort menu.
@@ -35,7 +38,7 @@ ruby scripts/new_article.rb "Some post" --source https://example.com/p # archive
 ruby scripts/new_article.rb "Release Checklist" --handbook             # handbook page
 ```
 
-Write the body and `summary`, leave `keywords: []`, and open a pull request.
+Write a summary of the article (format in [`CLAUDE.md`](CLAUDE.md)) with its `summary` field, leave `keywords: []`, and open a pull request.
 The **Process entries** workflow adds keywords (committed to your branch) and checks that non-Korean entries have a Korean translation.
 Easiest: ask Claude Code to add the article — [`CLAUDE.md`](CLAUDE.md) has it write the translation and keywords too.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the front matter reference and how tagging works.

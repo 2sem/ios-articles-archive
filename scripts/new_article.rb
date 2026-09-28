@@ -11,6 +11,7 @@
 # fills them in from _data/keywords.yml once the body is written.
 
 require "date"
+require "fileutils"
 require "json"
 require "optparse"
 
@@ -39,6 +40,7 @@ front << "author: #{JSON.generate(options[:author])}" if options[:author]
 front << "source_url: #{options[:source]}" if options[:source]
 front += ["summary: \"\"", "keywords: []", "---", "", "Write here.", ""]
 
+FileUtils.mkdir_p(File.dirname(path))
 File.write(path, front.join("\n"), encoding: "UTF-8")
 puts "created #{path.delete_prefix("#{root}/")}"
 puts "next: write the body + summary, then run `ruby scripts/keywords.rb #{path.delete_prefix("#{root}/")}`"

@@ -6,4 +6,5 @@ permalink: /handbook/
 <h1>Handbook</h1>
 <p class="lede">Evergreen guides on iOS engineering practice. Updated in place, dated by last revision.</p>
 {%- assign sorted = site.handbook | where_exp: 'e', 'e.translation_of == nil' | sort: 'title' -%}
+{% if sorted.size == 0 %}<p class="status">No handbook pages yet.</p>{% endif %}
 {% include entry-list.html entries=sorted %}

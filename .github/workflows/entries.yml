@@ -1,7 +1,9 @@
-name: Keywords
+name: Process entries
 
-# Assigns keywords to new or edited entries from _data/keywords.yml and
-# commits them back to the pull request branch.
+# For new or edited archive entries in a pull request:
+#   1. assign keywords from _data/keywords.yml and commit them to the branch
+#   2. check that every entry not written in Korean has a current Korean translation
+#      (written with Claude Code — see CLAUDE.md; no API key involved)
 
 on:
   pull_request:
@@ -10,16 +12,17 @@ on:
       - "_handbook/**"
       - "_data/keywords.yml"
       - "scripts/keywords.rb"
+      - "scripts/translations.rb"
 
 permissions:
   contents: write
 
 concurrency:
-  group: keywords-${{ github.head_ref }}
+  group: entries-${{ github.head_ref }}
   cancel-in-progress: true
 
 jobs:
-  keywords:
+  process:
     runs-on: ubuntu-latest
     env:
       SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
@@ -33,33 +36,41 @@ jobs:
         with:
           ruby-version: "3.3"
 
-      - name: Preview keyword changes
+      - name: Assign keywords
         run: |
           {
             echo "### Keywords"
             echo '```'
-            ruby scripts/keywords.rb --dry-run 2>&1
+            ruby scripts/keywords.rb 2>&1
             echo '```'
           } | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Commit keywords to the branch
         if: env.SAME_REPO == 'true'
         run: |
-          ruby scripts/keywords.rb
-          if git diff --quiet; then
+          git add _articles _handbook
+          if git diff --cached --quiet; then
             echo "Keywords already up to date."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -am "Assign keywords to archive entries"
+          git commit -m "Assign keywords to archive entries"
           git push
 
-      # Workflows can't push to forks: ask the contributor to run the script instead.
+      # Workflows can't push to forks: ask the contributor to run the keyword script instead.
       - name: Check keywords (forks)
         if: env.SAME_REPO != 'true'
         run: |
-          ruby scripts/keywords.rb --check || {
+          git diff --quiet -- _articles _handbook || {
             echo "::error::Some entries need keywords. Run 'ruby scripts/keywords.rb' locally and push the result."
+            exit 1
+          }
+
+      - name: Check Korean translations
+        shell: bash # implies -o pipefail, so the check's exit code survives `tee`
+        run: |
+          ruby scripts/translations.rb --check | tee -a "$GITHUB_STEP_SUMMARY" || {
+            echo "::error::Some entries lack a current Korean translation. Ask Claude Code to add them (see CLAUDE.md)."
             exit 1
           }

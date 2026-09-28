@@ -10,6 +10,11 @@ permalink: /search.json
     "url": {{ e.url | relative_url | jsonify }},
     "date": {{ e.date | date: '%Y-%m-%d' | jsonify }},
     "kind": {{ e.kind | jsonify }},
+    "lang": {{ e.lang | default: 'en' | jsonify }},
+    {%- include counterpart.html entry=e %}
+    "translation": {{ e.translation_of | default: false | jsonify }},
+    "group": {% if e.translation_of and counterpart %}{{ counterpart.url | relative_url | jsonify }}{% else %}{{ e.url | relative_url | jsonify }}{% endif %},
+    "alt": {% if counterpart %}{{ counterpart.url | relative_url | jsonify }}{% else %}null{% endif %},
     "author": {{ e.author | jsonify }},
     "source": {{ e.source_url | jsonify }},
     "keywords": {{ e.keywords | default: empty | jsonify }},

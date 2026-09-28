@@ -4,6 +4,9 @@
     <div class="result-meta">
       <span class="badge badge-{{ entry.kind }}">{{ entry.kind }}</span>
       <time datetime="{{ entry.date | date: '%Y-%m-%d' }}">{{ entry.date | date: '%b %-d, %Y' }}</time>
+      {%- if entry.lang == 'ko' %}<span class="badge badge-lang">KO</span>{% endif -%}
+      {%- include counterpart.html entry=entry -%}
+      {%- if counterpart %}<a class="lang-switch" href="{{ counterpart.url | relative_url }}">한국어</a>{% endif -%}
     </div>
     <h3 class="result-title"><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h3>
     {%- if entry.summary and entry.summary != '' %}<p class="result-snippet">{{ entry.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif -%}

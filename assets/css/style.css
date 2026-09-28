@@ -148,6 +148,12 @@ a:hover { text-decoration: underline; }
   padding: 2px 8px; border-radius: 6px;
   color: var(--accent); background: var(--accent-soft);
 }
+.badge-lang { color: var(--muted); background: var(--code-bg); }
+.lang-switch { font-size: 13px; margin-left: auto; }
+.notice {
+  margin: 24px 0 0; padding: 10px 14px; font-size: 14px; color: var(--muted);
+  background: var(--code-bg); border-radius: var(--radius);
+}
 .badge-handbook { color: var(--handbook); background: var(--handbook-soft); }
 
 /* ---------- results ---------- */

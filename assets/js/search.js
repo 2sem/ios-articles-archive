@@ -1,11 +1,13 @@
 // Client-side search over /search.json: free text + keyword facets + date range.
-// All state lives in the URL (?q=&k=&from=&to=&kind=&sort=) so searches are shareable.
+// All state lives in the URL (?q=&k=&from=&to=&kind=&lang=&sort=) so searches are shareable.
+// An original and its Korean translation share a `group`; unless a language is chosen, each
+// group shows once — as whichever version matched the query better (the original on a tie).
 (() => {
   "use strict";
 
   const form = document.getElementById("search");
   const $ = (id) => document.getElementById(id);
-  const input = $("q"), from = $("from"), to = $("to"), kind = $("kind"), sort = $("sort");
+  const input = $("q"), from = $("from"), to = $("to"), kind = $("kind"), lang = $("lang"), sort = $("sort");
   const facets = $("facets"), status = $("status"), results = $("results");
 
   const WEIGHT = { title: 10, keywords: 8, summary: 4, content: 1 };
@@ -67,11 +69,12 @@
 
   function run() {
     const { terms, excluded } = parseQuery(input.value);
-    const lo = from.value, hi = to.value, type = kind.value;
+    const lo = from.value, hi = to.value, type = kind.value, language = lang.value;
 
-    const matched = [];
+    let matched = [];
     for (const e of entries) {
       if (type && e.kind !== type) continue;
+      if (language && e.lang !== language) continue;
       if (lo && e.date < lo) continue; // ISO dates compare correctly as strings
       if (hi && e.date > hi) continue;
       if (selected.size && ![...selected].every((k) => e._keywordSet.has(k))) continue;
@@ -89,6 +92,7 @@
       }
       if (ok) matched.push({ e, score });
     }
+    if (!language) matched = onePerGroup(matched);
 
     const byDate = (a, b) => (a.e.date < b.e.date ? 1 : a.e.date > b.e.date ? -1 : 0);
     if (sort.value === "oldest") matched.sort((a, b) => -byDate(a, b));
@@ -100,8 +104,19 @@
     syncURL();
   }
 
+  function onePerGroup(matched) {
+    const best = new Map();
+    for (const m of matched) {
+      const cur = best.get(m.e.group);
+      if (!cur || m.score > cur.score || (m.score === cur.score && cur.e.translation && !m.e.translation)) {
+        best.set(m.e.group, m);
+      }
+    }
+    return [...best.values()];
+  }
+
   function render(list, terms) {
-    const filtered = input.value.trim() || selected.size || from.value || to.value || kind.value;
+    const filtered = input.value.trim() || selected.size || from.value || to.value || kind.value || lang.value;
     status.textContent = filtered
       ? `${list.length} result${list.length === 1 ? "" : "s"}${list.length ? "" : " — try fewer words or a wider date range"}`
       : `${list.length} entries in the archive`;
@@ -112,6 +127,8 @@
           <span class="badge badge-${escapeHTML(e.kind)}">${escapeHTML(e.kind)}</span>
           <time datetime="${e.date}">${formatDate(e.date)}</time>
           ${e.author ? `<span>· ${escapeHTML(e.author)}</span>` : ""}
+          ${e.lang === "ko" ? `<span class="badge badge-lang">KO</span>` : ""}
+          ${e.alt ? `<a class="lang-switch" href="${escapeHTML(e.alt)}">${e.translation ? "원문" : "한국어"}</a>` : ""}
         </div>
         <h3 class="result-title"><a href="${escapeHTML(e.url)}">${highlight(e.title, terms)}</a></h3>
         <p class="result-snippet">${highlight(snippet(e, terms), terms)}</p>
@@ -148,6 +165,7 @@
     if (from.value) p.set("from", from.value);
     if (to.value) p.set("to", to.value);
     if (kind.value) p.set("kind", kind.value);
+    if (lang.value) p.set("lang", lang.value);
     if (sort.value) p.set("sort", sort.value);
     const qs = p.toString();
     history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
@@ -160,6 +178,7 @@
     from.value = p.get("from") || "";
     to.value = p.get("to") || "";
     kind.value = p.get("kind") || "";
+    lang.value = p.get("lang") || "";
     sort.value = p.get("sort") || "";
   }
 
@@ -167,7 +186,7 @@
 
   let timer;
   input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(run, 120); });
-  for (const el of [from, to, kind, sort]) el.addEventListener("change", run);
+  for (const el of [from, to, kind, lang, sort]) el.addEventListener("change", run);
 
   form.addEventListener("click", (ev) => {
     const preset = ev.target.closest("[data-preset]");

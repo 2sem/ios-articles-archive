@@ -7,7 +7,7 @@ permalink: /keywords/
 <p class="lede">Every keyword in use. Keywords come from the taxonomy in
 <a href="https://github.com/{{ site.repository }}/blob/main/_data/keywords.yml"><code>_data/keywords.yml</code></a>
 and are assigned automatically to new entries.</p>
-{%- assign entries = site.articles | concat: site.handbook -%}
+{%- assign entries = site.articles | concat: site.handbook | where_exp: 'e', 'e.translation_of == nil' -%}
 <ul class="keyword-cloud">
 {%- for topic in site.data.keywords -%}
   {%- assign n = 0 -%}

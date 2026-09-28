@@ -12,6 +12,7 @@
 # Rules:
 #   * Entries with no `keywords` get the best-scoring taxonomy topics
 #     (title x3, summary x2, body x1; at most MAX_KEYWORDS).
+#   * Translations (`ko/` subfolders, see scripts/translations.rb) copy their original's keywords.
 #   * Existing keywords are normalized to canonical names ("async/await" -> "Concurrency").
 #     Keywords not in the taxonomy are kept as-is, with a warning.
 
@@ -100,7 +101,16 @@ end
 
 def rel(path) = path.delete_prefix("#{ROOT}/")
 
-def process(file, topics, force:)
+def translation?(file) = File.basename(File.dirname(file)) == "ko"
+def original_of(file) = File.join(File.dirname(file, 2), File.basename(file))
+
+def read_keywords(file)
+  match = File.read(file, encoding: "UTF-8").match(FRONT_MATTER)
+  data = match && YAML.safe_load(match[1], permitted_classes: [Date, Time])
+  Array(data && data["keywords"]).map(&:to_s)
+end
+
+def process(file, topics, force:, inherited: nil)
   raw = File.read(file, encoding: "UTF-8")
   match = raw.match(FRONT_MATTER)
   abort "error: #{rel(file)} has no YAML front matter" unless match
@@ -109,8 +119,8 @@ def process(file, topics, force:)
   body = match.post_match
   existing = Array(data["keywords"]).map(&:to_s).reject { |k| k.strip.empty? }
 
-  keywords = normalize(topics, existing, file)
-  if keywords.empty? || force
+  keywords = inherited || normalize(topics, existing, file)
+  if inherited.nil? && (keywords.empty? || force)
     suggested = suggest(topics, title: data["title"].to_s, summary: data["summary"].to_s, body: body)
     keywords = (keywords + suggested).uniq.first([MAX_KEYWORDS, keywords.size].max)
   end
@@ -138,14 +148,23 @@ files = if ARGV.empty?
 
 topics = load_taxonomy
 changed = 0
-files.each do |file|
-  result = process(file, topics, force: options[:force])
+resolved = {} # original path => its final keywords, handed down to translations
+files.partition { |f| !translation?(f) }.flatten.each do |file|
+  inherited = nil
+  if translation?(file)
+    original = original_of(file)
+    inherited = resolved[original] || (read_keywords(original) if File.exist?(original))
+    warn "  warning: #{rel(file)}: original #{rel(original)} not found" unless inherited
+  end
+
+  result = process(file, topics, force: options[:force], inherited: inherited)
+  resolved[file] = result ? result.last : read_keywords(file)
   next unless result
 
   updated, before, after = result
   changed += 1
   puts "#{rel(file)}: #{before.empty? ? '(none)' : before.join(', ')} -> #{after.join(', ')}"
-  File.write(file, updated) unless options[:check] || options[:dry_run]
+  File.write(file, updated, encoding: "UTF-8") unless options[:check] || options[:dry_run]
 end
 
 puts "#{changed} of #{files.size} file(s) #{options[:check] || options[:dry_run] ? 'need' : 'got'} keyword updates."

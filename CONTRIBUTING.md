@@ -22,7 +22,7 @@ keywords: []                # leave empty; filled in automatically
 ---
 ```
 
-Only archive external articles you have the right to republish; otherwise write a summary with your own notes and link to the original via `source_url`.
+Every archived article is **a summary and notes in our own words** with a link to the original (`source_url`), never the full text. See the summary format in [`CLAUDE.md`](CLAUDE.md). The easiest way to add one is to give Claude Code the article (URL, PDF, or text); it follows the read → summary → keyword → archive steps.
 
 ## 3. Keywords
 

@@ -52,7 +52,7 @@
 - name: Animation
   aliases: [animations, withAnimation, Core Animation, CALayer, matchedGeometryEffect, spring animation, 애니메이션]
 - name: Layout
-  aliases: [Auto Layout, NSLayoutConstraint, stack view, UIStackView, Layout protocol, safe area, 레이아웃]
+  aliases: [Auto Layout, NSLayoutConstraint, stack view, UIStackView, Layout protocol, safe area, container view, container views, custom container, containerRelativeFrame, 레이아웃, 컨테이너 뷰]
 - name: Accessibility
   aliases: [VoiceOver, Dynamic Type, a11y, accessibilityLabel, 접근성]
 - name: Localization

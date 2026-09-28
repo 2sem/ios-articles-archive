@@ -1,15 +1,23 @@
+{%- comment -%}
+  Lists originals. When an entry has a Korean translation, both versions are rendered and CSS
+  shows the one matching the reader's EN/KO preference (html[data-pref]); otherwise the original.
+{%- endcomment -%}
 <ol class="results">
   {%- for entry in include.entries -%}
-  <li class="result">
+  {%- include counterpart.html entry=entry -%}
+  <li class="result{% if counterpart %} has-ko{% endif %}">
     <div class="result-meta">
       <span class="badge badge-{{ entry.kind }}">{{ entry.kind }}</span>
       <time datetime="{{ entry.date | date: '%Y-%m-%d' }}">{{ entry.date | date: '%b %-d, %Y' }}</time>
-      {%- if entry.lang == 'ko' %}<span class="badge badge-lang">KO</span>{% endif -%}
-      {%- include counterpart.html entry=entry -%}
-      {%- if counterpart %}<a class="lang-switch" href="{{ counterpart.url | relative_url }}">한국어</a>{% endif -%}
     </div>
-    <h3 class="result-title"><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h3>
-    {%- if entry.summary and entry.summary != '' %}<p class="result-snippet">{{ entry.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif -%}
+    {%- assign shown = entry -%}
+    {%- for version in (1..2) -%}
+      {%- if version == 2 -%}{%- if counterpart -%}{%- assign shown = counterpart -%}{%- else -%}{%- break -%}{%- endif -%}{%- endif %}
+    <div class="{% if version == 1 %}v-orig{% else %}v-ko{% endif %}"{% if shown.lang %} lang="{{ shown.lang }}"{% endif %}>
+      <h3 class="result-title"><a href="{{ shown.url | relative_url }}">{{ shown.title }}</a></h3>
+      {%- if shown.summary and shown.summary != '' %}<p class="result-snippet">{{ shown.summary | markdownify | remove: '<p>' | remove: '</p>' | strip }}</p>{% endif %}
+    </div>
+    {%- endfor %}
     {% include keyword-chips.html keywords=entry.keywords %}
   </li>
   {%- endfor -%}

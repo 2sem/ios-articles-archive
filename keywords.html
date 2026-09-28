@@ -8,6 +8,7 @@ permalink: /keywords/
 <a href="https://github.com/{{ site.repository }}/blob/main/_data/keywords.yml"><code>_data/keywords.yml</code></a>
 and are assigned automatically to new entries.</p>
 {%- assign entries = site.articles | concat: site.handbook | where_exp: 'e', 'e.translation_of == nil' -%}
+{% if entries.size == 0 %}<p class="status">No keywords yet — they appear once articles are added.</p>{% endif %}
 <ul class="keyword-cloud">
 {%- for topic in site.data.keywords -%}
   {%- assign n = 0 -%}

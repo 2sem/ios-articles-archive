@@ -36,27 +36,29 @@ ruby scripts/new_article.rb "Release Checklist" --handbook             # handboo
 ```
 
 Write the body and `summary`, leave `keywords: []`, and open a pull request.
-The **Process entries** workflow adds keywords and, for non-Korean entries, a Korean translation, and commits them to your branch.
+The **Process entries** workflow adds keywords (committed to your branch) and checks that non-Korean entries have a Korean translation.
+Easiest: ask Claude Code to add the article — [`CLAUDE.md`](CLAUDE.md) has it write the translation and keywords too.
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the front matter reference and how tagging works.
 
 ## Korean translations
 
-`scripts/translate.rb` finds entries that aren't written in Korean and archives a Korean translation of each,
-using the Claude API (`claude-opus-5`, with server-side refusal fallbacks enabled):
+Every entry not written in Korean has a Korean translation at `_<collection>/ko/<same file name>`
+(`lang: ko`, `translation_of: <original>`), linked both ways on the site.
+
+Translations are written with **Claude Code** when an entry is added — no API key or paid API.
+[`CLAUDE.md`](CLAUDE.md) tells any Claude Code session how: write the translation, stamp it, assign keywords.
+Just ask Claude Code to "add this article" and it follows those steps.
 
 ```sh
-ruby scripts/translate.rb --dry-run   # list entries missing a current translation (no API calls)
-ANTHROPIC_API_KEY=... bundle exec ruby scripts/translate.rb
+ruby scripts/translations.rb                   # list entries missing a current translation
+ruby scripts/translations.rb --stamp FILE...   # mark a finished translation as current
+ruby scripts/translations.rb --check           # exit 1 if any are missing or stale (CI)
 ```
 
-- A translation lives at `_<collection>/ko/<same file name>` with `lang: ko` and `translation_of: <original>`.
-  Keywords are copied from the original by `scripts/keywords.rb`.
-- Language is detected from the text (Hangul share of the prose, code excluded) unless `lang` is set in front matter.
 - Each translation stores `translation_hash`, a digest of the original's title, summary and body.
-  **Editing the original makes the translation stale, and it is re-translated on the next run** —
-  so fix wording in the original, not in the translation (or it'll be overwritten).
-- CI runs it on pull requests (committing to the branch) and again on deploy as a safety net.
-  Add an `ANTHROPIC_API_KEY` **repository secret** to enable it; without one it is skipped.
+  **Editing the original marks the translation stale** until it's updated and stamped again.
+- Language is detected from the text (Hangul share of the prose, code excluded) unless `lang` is set.
+- Pull requests fail the **Process entries** check while a translation is missing or stale; deploys only warn.
 
 ## How keywords are assigned
 
@@ -83,8 +85,7 @@ bundle exec jekyll serve   # http://localhost:4000/ios-articles-archive/
 ## Deployment
 
 Pushes to `main` build and deploy via [`.github/workflows/pages.yml`](.github/workflows/pages.yml).
-One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**, and add the
-`ANTHROPIC_API_KEY` secret under **Settings → Secrets and variables → Actions** for translations.
+One-time setup: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
 
 ---
 
@@ -93,5 +94,5 @@ One-time setup: **Settings → Pages → Build and deployment → Source: GitHub
 iOS 엔지니어링 아티클 아카이브 + 핸드북입니다. 키워드·본문·기간으로 검색할 수 있고, 새 글을 PR로 올리면
 `_data/keywords.yml`의 분류 체계를 기준으로 키워드가 자동 지정됩니다. 한국어 본문도 검색·태깅됩니다
 (예: 본문의 "모듈화를" → `Modularization`). 새 주제는 `keywords.yml`에 별칭(한국어 포함)을 추가하면 됩니다.
-한국어가 아닌 글은 Claude API로 번역한 한국어판이 `ko/` 폴더에 함께 보관되며, 원문을 수정하면 번역도 다시 생성됩니다
-(리포지토리 시크릿 `ANTHROPIC_API_KEY` 필요).
+한국어가 아닌 글은 한국어 번역본이 `ko/` 폴더에 함께 보관됩니다. 번역은 API 없이 Claude Code 세션에서 글을 추가할 때
+함께 작성하며(`CLAUDE.md` 참고), 원문을 수정하면 CI가 번역이 오래되었다고 알려 줍니다.

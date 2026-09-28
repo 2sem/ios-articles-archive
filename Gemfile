@@ -8,7 +8,3 @@ group :jekyll_plugins do
   gem "jekyll-seo-tag", "~> 2.8"
   gem "jekyll-feed", "~> 0.17"
 end
-
-group :tools do
-  gem "anthropic", "~> 1.73" # scripts/translate.rb
-end

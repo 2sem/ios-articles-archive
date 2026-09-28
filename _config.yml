@@ -25,7 +25,7 @@ defaults:
     values: { layout: post, kind: article }
   - scope: { path: "", type: handbook }
     values: { layout: post, kind: handbook }
-  # Korean translations (scripts/translate.rb) live in ko/ subfolders.
+  # Korean translations (scripts/translations.rb) live in ko/ subfolders.
   - scope: { path: "_articles/ko", type: articles }
     values: { lang: ko, permalink: "/ko/articles/:year/:month/:title/" }
   - scope: { path: "_handbook/ko", type: handbook }
@@ -46,3 +46,4 @@ exclude:
   - vendor/
   - README.md
   - CONTRIBUTING.md
+  - CLAUDE.md

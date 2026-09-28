@@ -37,11 +37,17 @@ If the tagger misses the main topic, the fix is usually a missing alias in `_dat
 
 ## 4. Korean translation
 
-If the entry isn't in Korean, don't write a translation yourself — the **Process entries** workflow
-archives one at `ko/<same file name>` when you open the pull request (or on merge, for forks).
-For a Korean-language entry, add `lang: ko` to the front matter (it's also detected automatically).
+Every entry not written in Korean needs a Korean translation at `ko/<same file name>`.
+The easy way: ask Claude Code to add the article — [`CLAUDE.md`](CLAUDE.md) has it write the translation,
+following the translation rules there. To do it by hand, write `title`, `summary` and the body, then:
 
-To correct a translation, fix the original's wording instead: translations are regenerated whenever the original changes.
+```sh
+ruby scripts/translations.rb --stamp _articles/ko/<file name>.md
+ruby scripts/keywords.rb
+```
+
+If you edit an original later, update its translation and stamp it again — CI fails while it's stale.
+For a Korean-language entry, add `lang: ko` to the front matter (it's also detected automatically).
 
 ## 5. Preview
 

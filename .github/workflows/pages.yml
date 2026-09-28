@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # commits translations/keywords generated at deploy time
+  contents: write # commits keywords generated at deploy time
   pages: write
   id-token: write
 
@@ -25,27 +25,25 @@ jobs:
           ruby-version: "3.3"
           bundler-cache: true
 
-      # Safety net for entries that reached main without going through entries.yml
-      # (direct pushes, fork PRs, or a missing API key at PR time): translate and tag
-      # them now, publish them in this build, and commit them so it's a one-time cost.
-      - name: Translate to Korean
-        run: bundle exec ruby scripts/translate.rb
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-
+      # Safety net for entries pushed straight to main: fill in missing keywords
+      # for this build and commit them. (Pull requests get them from entries.yml.)
       - name: Assign missing keywords
-        run: bundle exec ruby scripts/keywords.rb
+        run: ruby scripts/keywords.rb
 
-      - name: Commit generated files
-        # A protected main may reject the push; the build still publishes the files.
+      - name: Commit keywords
+        # A protected main may reject the push; the build still publishes the keywords.
         continue-on-error: true
         run: |
           git add _articles _handbook
           if git diff --cached --quiet; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Archive Korean translations and keywords"
+          git commit -m "Assign keywords to archive entries"
           git push
+
+      # Never blocks a deploy; just makes a missing translation visible in the run.
+      - name: Report missing Korean translations
+        run: ruby scripts/translations.rb --check || echo "::warning::Some entries lack a current Korean translation."
 
       - id: pages
         uses: actions/configure-pages@v5

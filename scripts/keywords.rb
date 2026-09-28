@@ -12,7 +12,7 @@
 # Rules:
 #   * Entries with no `keywords` get the best-scoring taxonomy topics
 #     (title x3, summary x2, body x1; at most MAX_KEYWORDS).
-#   * Translations (`ko/` subfolders, see scripts/translate.rb) copy their original's keywords.
+#   * Translations (`ko/` subfolders, see scripts/translations.rb) copy their original's keywords.
 #   * Existing keywords are normalized to canonical names ("async/await" -> "Concurrency").
 #     Keywords not in the taxonomy are kept as-is, with a warning.
 
